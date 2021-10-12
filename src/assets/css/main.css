@@ -51,3 +51,8 @@ tbody tr:nth-child(even) {
   color: #fff;
   cursor: pointer;
 }
+
+.item span {
+  background-color: yellow;
+  color: #000;
+}

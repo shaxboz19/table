@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <input type="text" v-model="searchText" @keypress.enter="onSearch" />
+    <input type="text" v-model="searchText" />
     <table>
       <thead>
         <tr>
@@ -12,12 +12,13 @@
       </thead>
 
       <tbody>
-        <tr v-for="person of persons" :key="person.id">
+        <tr v-for="person of searchPersons" :key="person.id">
           <td>
             <span
               v-if="person.isEdit != 'firstName'"
               @click="onEdit(person.id, 'firstName')"
               v-html="person.firstName"
+              class="item"
             ></span>
             <input
               type="text"
@@ -31,6 +32,7 @@
               v-if="person.isEdit != 'lastName'"
               @click="onEdit(person.id, 'lastName')"
               v-html="person.lastName"
+              class="item"
             ></span>
             <input
               type="text"
@@ -44,6 +46,7 @@
               v-if="person.isEdit != 'age'"
               @click="onEdit(person.id, 'age')"
               v-html="person.age"
+              class="item"
             >
             </span>
             <input
@@ -125,26 +128,35 @@ export default {
     deletePerson(id) {
       this.persons = this.persons.filter((i) => i.id != id);
     },
-    onSearch() {
+    onSearch() {},
+  },
+  computed: {
+    searchPersons() {
       let results = [];
-      this.persons.forEach((item) => {
-        let isRes = false;
-        Object.keys(item).forEach((key) => {
-          if (key != "id") {
-            if (item[key].toString().includes(this.searchText)) {
-              item[key] = item[key].replace(
-                this.searchText,
-                `<span>${this.searchText}</span>`
-              );
-              console.log(item[key]);
-              isRes = true;
+      const persons = [...this.persons];
+      if (this.searchText) {
+        persons.forEach((item) => {
+          let isRes = false;
+          Object.keys(item).forEach((key) => {
+            if (key != "id") {
+              if (item[key].toString().includes(this.searchText)) {
+                item[key] = item[key].replace(
+                  this.searchText,
+                  `<span>${this.searchText}</span>`
+                );
+                isRes = true;
+              }
             }
-          }
+          });
+          isRes && results.push(item);
         });
-        isRes && results.push(item);
-      });
-      console.log(results);
+        return results;
+      } else {
+        return this.persons;
+      }
     },
   },
 };
 </script>
+
+
